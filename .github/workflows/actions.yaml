@@ -1,0 +1,33 @@
+name: testing my actions file :)
+
+on: 
+  push: 
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out code
+        uses: actions/checkout@v2
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: install libraries
+        run: |
+            cd function
+            python -m pip install pip --upgrade pip
+            if [ -f requirements.txt ]; then pip install -r requirements.txt -t .; fi
+      - name: create zip bundle
+        run: |
+            cd function
+            zip -r ../${{ github.sha }}.zip .
+      - name: archive the artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: zip-bundles.zip
+          path: ${{ github.sha }}.zip
+            
+      
